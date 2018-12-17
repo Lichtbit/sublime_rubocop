@@ -4,25 +4,27 @@ import locale
 import re
 import os
 
-if sublime.version() >= '3000':
-  from RuboCop.file_tools import FileTools
-  from RuboCop.rubocop_runner import RubocopRunner
-  from RuboCop.constants import *
-else:
-  from file_tools import FileTools
-  from rubocop_runner import RubocopRunner
-  from constants import *
+from .tools import FileTools
+from .tools import Settings
+from .rubocop_daemon_runner import RubocopDaemonRunner
+
+REGIONS_ID = 'rubocop_daemon_remark_regions'
+STATUS_ID = 'rubocop_daemon'
+REGIONS_OPTIONS_BITS = (sublime.DRAW_EMPTY |
+                        sublime.DRAW_NO_FILL |
+                        sublime.DRAW_NO_OUTLINE |
+                        sublime.DRAW_SQUIGGLY_UNDERLINE |
+                        sublime.HIDE_ON_MINIMAP)
 
 # Event listener to provide on the fly checks when saving a ruby file.
-class RubocopEventListener(sublime_plugin.EventListener):
+class RubocopDaemonEventListener(sublime_plugin.EventListener):
   listener_instance = None
 
   def __init__(self):
-    super(RubocopEventListener, self).__init__()
+    super(RubocopDaemonEventListener, self).__init__()
     self.file_remark_dict = {}
-    RubocopEventListener.listener_instance = self
-    if sublime.version() >= '3000':
-      sublime.set_timeout_async(self.update_marks, 2)
+    RubocopDaemonEventListener.listener_instance = self
+    sublime.set_timeout_async(self.update_marks, 2)
 
   @classmethod
   def instance(cls):
@@ -65,52 +67,29 @@ class RubocopEventListener(sublime_plugin.EventListener):
       if line_no is not None:
         ln = int(line_no) - 1
         view_dict[ln] = message
+        print(message)
         line = view.line(view.text_point(ln, 0))
         lines.append(sublime.Region(line.begin(), line.end()))
     self.mark_lines(view, lines)
 
   def mark_lines(self, view, lines):
-    s = sublime.load_settings(SETTINGS_FILE)
-    icon = s.get('mark_icon') or 'arrow_right'
-    view.add_regions(REGIONS_ID, lines, 'keyword', icon,
-        REGIONS_OPTIONS_BITS)
+    icon = Settings.get(view, 'mark_icon', 'arrow_right')
+    view.add_regions(REGIONS_ID, lines, 'keyword', icon, REGIONS_OPTIONS_BITS)
 
   def run_rubocop(self, view):
-    s = sublime.load_settings(SETTINGS_FILE)
-
-    rubocop_disable = view.settings().get(
-      'rubocop_disable',
-      s.get('rubocop_disable'),
-    )
-
-    if rubocop_disable:
+    if Settings.get(view, 'disable', False):
       return []
 
-
-    use_rvm = view.settings().get('check_for_rvm', s.get('check_for_rvm'))
-    use_rbenv = view.settings().get('check_for_rbenv', s.get('check_for_rbenv'))
-    cmd = view.settings().get('rubocop_command', s.get('rubocop_command'))
-    rvm_path = view.settings().get('rvm_auto_ruby_path', s.get('rvm_auto_ruby_path'))
-    rbenv_path = view.settings().get('rbenv_path', s.get('rbenv_path'))
-    cfg_file = view.settings().get('rubocop_config_file', s.get('rubocop_config_file'))
-    chdir = view.settings().get('rubocop_chdir', s.get('rubocop_chdir'))
-
+    cfg_file = Settings.get(view, 'config_file')
     if cfg_file:
       cfg_file = FileTools.quote(cfg_file)
 
-    runner = RubocopRunner(
-      {
-        'use_rbenv': use_rbenv,
-        'use_rvm': use_rvm,
-        'custom_rubocop_cmd': cmd,
-        'rvm_auto_ruby_path': rvm_path,
-        'rbenv_path': rbenv_path,
-        'on_windows': sublime.platform() == 'windows',
-        'rubocop_config_file': cfg_file,
-        'chdir': chdir,
-        'is_st2': sublime.version() < '3000'
-      }
-    )
+    runner = RubocopDaemonRunner(view, {
+      'config_file': cfg_file,
+      'workspace': Settings.get(view, 'workspace'),
+      'auto_correct': Settings.get(view, 'auto_correct', False),
+      'start_daemon_automaticly': Settings.get(view, 'start_daemon_automaticly', False),
+    })
     output = runner.run([view.file_name()], ['--format', 'emacs']).splitlines()
 
     return output
@@ -124,15 +103,8 @@ class RubocopEventListener(sublime_plugin.EventListener):
   def do_in_file_check(self, view):
     if not FileTools.is_ruby_file(view):
       return
-    mark = sublime.load_settings(SETTINGS_FILE).get('mark_issues_in_view')
+    mark = Settings.get(view, 'mark_issues_in_view')
     self.mark_issues(view, mark)
-
-  def on_post_save(self, view):
-    if sublime.version() >= '3000':
-      # To improve performance, we use the async method within ST3
-      return
-
-    self.do_in_file_check(view)
 
   def on_post_save_async(self, view):
     self.do_in_file_check(view)
@@ -149,6 +121,6 @@ class RubocopEventListener(sublime_plugin.EventListener):
       first_sel = curr_sel[0]
       row, col = view.rowcol(first_sel.begin())
       if row in view_dict.keys():
-        view.set_status('rubocop', 'RuboCop: {0}'.format(view_dict[row]))
+        view.set_status(STATUS_ID, 'RuboCop: {0}'.format(view_dict[row]))
       else:
-        view.set_status('rubocop', '')
+        view.set_status(STATUS_ID, '')

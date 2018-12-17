@@ -2,26 +2,13 @@ import os
 import pipes
 import sublime
 
-if sublime.version() >= '3000':
-  RUBY_SYNTAX_FILES = [
-    'Ruby.sublime-syntax',
-    'Ruby on Rails.sublime-syntax',
-    'RSpec.sublime-syntax'
-  ]
-else:
-  RUBY_SYNTAX_FILES = [
-    'Ruby.tmLanguage',
-    'Ruby on Rails.tmLanguage',
-    'RSpec.tmLanguage'
-  ]
+RUBY_SYNTAX_FILES = [
+  'Ruby.sublime-syntax',
+  'Ruby on Rails.sublime-syntax',
+  'RSpec.sublime-syntax',
+]
 
 class FileTools(object):
-  """Simple file operations"""
-
-  @staticmethod
-  def is_executable(path):
-    return os.path.isfile(path) and os.access(path, os.X_OK)
-
   @staticmethod
   def quote(path):
     # TODO: Use shlex.quote as soon as a newer python version is available.
@@ -39,5 +26,14 @@ class FileTools(object):
     for syntax in RUBY_SYNTAX_FILES:
       if syntax_file.endswith(syntax):
         return True
-
     return False
+
+class Settings():
+  @staticmethod
+  def get(view, key, default=""):
+    file_settings = sublime.load_settings('RubocopDaemon.sublime-settings')
+    try:
+      value = view.settings().get('rubocop_daemon').get(key)
+    except AttributeError:
+      value = ""
+    return value or file_settings.get(key, view.settings().get("rubocop_daemon_" + key, default))

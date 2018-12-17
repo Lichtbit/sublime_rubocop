@@ -1,89 +1,90 @@
-# Sublime RuboCop
+# RubocopDaemon
 
-A [Sublime Text](http://www.sublimetext.com/) plugin that runs [RuboCop](https://github.com/bbatsov/rubocop) on your Ruby files in the editor. It will mark issues right inside the view but it can also be called as a "compiler" from the ST menu.
+A [Sublime Text](http://www.sublimetext.com/) plugin that runs [RuboCop](https://github.com/bbatsov/rubocop) with an [daemon](https://github.com/fohte/rubocop-daemon) on your Ruby files in the editor. It will mark issues right inside the view.
 
-The Plugin currently supports both ST2 and ST3, but the usage of ST3 is strongly recommended.
+The plugin supports only ST3.
 
 ## Installation
 
 ### Prerequisites
 
-Please make sure `rubocop` is installed:
+Please make sure `rubocop-daemon` is installed:
 
-`gem install rubocop`
+`gem install rubocop-daemon`
 
 ### Recommended
 
-Install Sublime RuboCop via [Package Control](http://wbond.net/sublime_packages/package_control).
+Install RubocopDaemon via [Package Control](http://wbond.net/sublime_packages/package_control).
 
 ### Manual
 
 1. Navigate to the Sublime Text Packages folder (You can find the location of the Packages folder [here](http://docs.sublimetext.info/en/latest/basic_concepts.html#the-data-directory)).
 
-2. Run the git clone command right inside the packages directory: `git clone git@github.com:pderichs/sublime_rubocop.git "RuboCop"`
+2. Run the git clone command right inside the packages directory: `git clone https://github.com/Lichtbit/sublime_rubocop_daemon "RubocopDaemon"`
 
 3. Restart Sublime Text.
 
-## What can it do for you?
+## Configuration
 
-By default, the plugin marks RuboCop issues right in the view when you open or save a Ruby file.
+### Per project configuration
 
-Additionally you can run RuboCop from the ST menu in many ways. For example you can perform a RuboCop check on all files of the current project to get a general overview. The issues will be listed inside the Sublime output window, so you can easily navigate to each of them.
-
-You can also run the RuboCop auto correction for the current file from the Sublime Text menu.
-
-### ST2
-
-Due to performance issues the plugin behaves a bit different under ST2. It will run RuboCop only when you **save** files. If you experience any performance issues when saving ruby files caused by that plugin, just disable the functionality in the settings (see ```mark_issues_in_view```).
-
-## Environment
-
-By default this plugin uses [rvm](https://rvm.io/) to run RuboCop, but you can switch to [rbenv](https://github.com/sstephenson/rbenv) or provide your own command line in the settings. The plugin uses default paths to run rvm or rbenv but you can customize these paths in the settings. 
-
-To use rbenv, for example, go to _Preferences > Package Settings > Rubocop > Settings-User_ and add the following:
+You should open your correct project configuration file and add a section: `settings`:
 
 ```
 {
-  "check_for_rvm": false,
-  "check_for_rbenv": true,
-  // In case you need a custom rbenv path
-  "rbenv_path": "~/.rbenv/bin/rbenv",
+    "folders":
+    [
+        {
+            "path": "/home/lichtbit/workspace/ruby-project"
+        }
+    ],
+    "settings":
+    {
+        "rubocop_daemon":
+        {
+            // Start Rubocop with option "-a"
+            "auto_correct": true,
+
+            // Rubocop config file "--config"
+            "config_file": "/home/lichtbit/workspace/ruby-project/config/rubocop.yml",
+
+            // Disable RubocopDaemon for this project
+            "disabled": false,
+
+            // Start daemon automaticly with command (seperate arguments with array)
+            "start_daemon_automaticly": ["/home/lichtbit/.rvm/wrappers/ruby-2.5.3@m3/rubocop-daemon", "start"],
+
+            // Workspace, to use use "cd" before starting rubocop
+            "workspace": "/home/lichtbit/workspace/ruby-project/",
+
+            // Mark rubocop issues in view
+            "mark_issues_in_view": true
+        }
+    }
 }
 ```
 
-## ToDo
+### Per global configuration
 
-* As reported by some users the plugin seems to be not working properly when using RVM with custom gemsets: [issue #19](https://github.com/pderichs/sublime_rubocop/issues/19).
+_Preferences > Package Settings > RubocopDaemon > Settings-User_
 
-## Reporting issues
 
-If you encounter an issue, please add some general information about your environment:
 
-* Operating System
-* Sublime Text version
-* Details about your config e.g. do you use `rbenv`, `rvm` or `your_own_command` to run rubocop?
+## What can it do for you?
 
-Please also provide the steps to reproduce the issue.
-
-## Contributing
-
-1. Fork the repo.
-2. Create a branch from the current master branch.
-3. Start hacking.
-4. Create a pull request.
-5. Patience :relaxed: .
+By default, the plugin marks Rubocop issues right in the view when you open or save a Ruby file.
 
 ## Credits
 
-Thanks go out to all [contributors](https://github.com/pderichs/sublime_rubocop/graphs/contributors).
+The plugin was forked from [Sublime RuboCop](https://github.com/pderichs/sublime_rubocop). So thanks go out to all [contributors](https://github.com/pderichs/sublime_rubocop/graphs/contributors).
 
-Thanks go out to [Will Bond](https://github.com/wbond) for his awesome sample and documentation about ST plugins, and thanks go out to the people implementing the [sublime-text-2-ruby-tests Plugin](https://github.com/maltize/sublime-text-2-ruby-tests) - your source gave me some important hints for my implementation.
+Thanks go out to all [contributors of rubocop](https://github.com/bbatsov/rubocop/graphs/contributors) and [contributors of rubocop-daemon](https://github.com/fohte/rubocop-daemon/graphs/contributors)
 
 ## License
 
-All of Sublime RuboCop is licensed under the MIT license.
+All of RubocopDaemon is licensed under the MIT license.
 
-  Copyright (c) 2013 Patrick Derichs <patderichs@gmail.com>
+  Copyright (c) 2018 Georg Limbach <georg.limbach@lichtbit.com>
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal

@@ -1,33 +1,5 @@
 [
   {
-    "id": "tools",
-    "children":
-    [
-      {
-        "id": "rubocop_sublime_menu_main",
-        "caption": "RuboCop",
-        "children":
-        [
-          {
-            "id": "rubocop_sublime_menu_single_file",
-            "command": "rubocop_check_single_file",
-            "caption": "RuboCop Check Single File"
-          },
-          {
-            "id": "rubocop_sublime_menu_project",
-            "command": "rubocop_check_project",
-            "caption": "RuboCop Check Project"
-          },
-          {
-            "id": "rubocop_sublime_menu_file_folder",
-            "command": "rubocop_check_file_folder",
-            "caption": "RuboCop Check File Folder"
-          }
-        ]
-      }
-    ]
-  },
-  {
     "id": "preferences",
     "children":
     [
@@ -38,75 +10,23 @@
         "children":
         [
           {
-            "caption": "RuboCop",
+            "caption": "RubocopDaemon",
             "children":
             [
               {
                 "command":"open_file",
                 "args":{
-                  "file":"${packages}/RuboCop/RuboCop.sublime-settings"
+                  "file":"${packages}/RubocopDaemon/RubocopDaemon.sublime-settings"
                 },
                 "caption":"Settings – Default"
               },
               {
                 "command":"open_file",
                 "args":{
-                  "file":"${packages}/User/RuboCop.sublime-settings"
+                  "file":"${packages}/User/RubocopDaemon.sublime-settings"
                 },
                 "caption":"Settings – User"
-              },
-              {
-                "caption":"-"
-              },
-              {
-                "command": "open_file",
-                "args": {
-                    "file": "${packages}/RuboCop/Default (Windows).sublime-keymap",
-                    "platform": "Windows"
-                },
-                "caption": "Key Bindings – Default"
-              },
-              {
-                "command": "open_file",
-                "args": {
-                    "file": "${packages}/RuboCop/Default (OSX).sublime-keymap",
-                    "platform": "OSX"
-                },
-                "caption": "Key Bindings – Default"
-              },
-              {
-                "command": "open_file",
-                "args": {
-                    "file": "${packages}/RuboCop/Default (Linux).sublime-keymap",
-                    "platform": "Linux"
-                },
-                "caption": "Key Bindings – Default"
-              },
-              {
-                "command": "open_file",
-                "args": {
-                    "file": "${packages}/User/Default (Windows).sublime-keymap",
-                    "platform": "Windows"
-                },
-                "caption": "Key Bindings – User"
-              },
-              {
-                "command": "open_file",
-                "args": {
-                    "file": "${packages}/User/Default (OSX).sublime-keymap",
-                    "platform": "OSX"
-                },
-                "caption": "Key Bindings – User"
-              },
-              {
-                "command": "open_file",
-                "args": {
-                    "file": "${packages}/User/Default (Linux).sublime-keymap",
-                    "platform": "Linux"
-                },
-                "caption": "Key Bindings – User"
-              },
-              { "caption": "-" }
+              }
             ]
           }
         ]
