@@ -2,11 +2,6 @@ import os
 import pipes
 import sublime
 
-RUBY_SYNTAX_FILES = [
-  'Ruby.sublime-syntax',
-  'Ruby on Rails.sublime-syntax',
-  'RSpec.sublime-syntax',
-]
 
 class FileTools(object):
   @staticmethod
@@ -18,15 +13,7 @@ class FileTools(object):
   def is_ruby_file(view):
     if not view:
       return False
-    syntax_file = view.settings().get('syntax')
-
-    if syntax_file == None:
-      return False
-
-    for syntax in RUBY_SYNTAX_FILES:
-      if syntax_file.endswith(syntax):
-        return True
-    return False
+    return view.match_selector(0, 'source.ruby')
 
 class Settings():
   @staticmethod
