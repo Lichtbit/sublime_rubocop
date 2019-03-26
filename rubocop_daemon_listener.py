@@ -18,17 +18,10 @@ REGIONS_OPTIONS_BITS = (sublime.DRAW_EMPTY |
 
 # Event listener to provide on the fly checks when saving a ruby file.
 class RubocopDaemonEventListener(sublime_plugin.EventListener):
-  listener_instance = None
-
   def __init__(self):
     super(RubocopDaemonEventListener, self).__init__()
     self.file_remark_dict = {}
-    RubocopDaemonEventListener.listener_instance = self
     sublime.set_timeout_async(self.update_marks, 2)
-
-  @classmethod
-  def instance(cls):
-    return cls.listener_instance
 
   def get_current_file_dict(self, view):
     if not (view.file_name() in self.file_remark_dict.keys()):
