@@ -109,9 +109,6 @@ class RubocopDaemonEventListener(sublime_plugin.EventListener):
   def on_post_save_async(self, view):
     self.do_in_file_check(view)
 
-  def on_load_async(self, view):
-    self.do_in_file_check(view)
-
   def on_selection_modified(self, view):
     curr_sel = view.sel()
     if curr_sel:
