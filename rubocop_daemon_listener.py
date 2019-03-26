@@ -90,7 +90,7 @@ class RubocopDaemonEventListener(sublime_plugin.EventListener):
       'auto_correct': Settings.get(view, 'auto_correct', False),
       'start_daemon_automaticly': Settings.get(view, 'start_daemon_automaticly', False),
     })
-    output = runner.run([view.file_name()], ['--format', 'emacs']).splitlines()
+    output = runner.run([view.file_name()], ['--format', 'emacs', '--force-exclusion']).splitlines()
 
     return output
 
