@@ -84,7 +84,13 @@ class RubocopDaemonRunner(object):
   def daemon_file(self, name):
     sub_path = self.workspace.strip("/").replace('/', '+')
     file = path.join(expanduser("~"), ".cache/rubocop-daemon/%s/%s" % (sub_path, name))
-    return "" if not path.isfile(file) else open(file, "r").read()
+    if not path.isfile(file):
+      return ""
+    try:
+      with open(file, "r") as stream:
+        return stream.read()
+    except OSError:
+      return ""
 
   def options_string(self, pathlist, options=[]):
     list = self.options_list(pathlist, options)
