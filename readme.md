@@ -45,6 +45,11 @@ You should open your correct project configuration file and add a section: `sett
             // Start Rubocop with option "-a"
             "auto_correct": true,
 
+            // Start Rubocop with option "-A"
+            // possible since rubocop 0.87
+            // https://github.com/rubocop-hq/rubocop/releases/tag/v0.87.0
+            "auto_correct_all": true,
+
             // Rubocop config file "--config"
             "config_file": "/home/lichtbit/workspace/ruby-project/config/rubocop.yml",
 

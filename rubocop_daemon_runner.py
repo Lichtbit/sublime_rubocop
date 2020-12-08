@@ -18,6 +18,7 @@ class RubocopDaemonRunner(object):
     self.socket = None
     self.workspace = None
     self.auto_correct = False
+    self.auto_correct_all = False
     self.start_daemon_automaticly = False
     vars(self).update(args)
  
@@ -105,7 +106,9 @@ class RubocopDaemonRunner(object):
     if self.config_file:
       result.append('-c')
       result.append(self.config_file)
-    if self.auto_correct:
+    if self.auto_correct_all:
+      result.append('-A')
+    elif self.auto_correct:
       result.append('-a')
     for path in pathlist:
       result.append(path)

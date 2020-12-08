@@ -81,6 +81,7 @@ class RubocopDaemonEventListener(sublime_plugin.EventListener):
       'config_file': cfg_file,
       'workspace': Settings.get(view, 'workspace'),
       'auto_correct': Settings.get(view, 'auto_correct', False),
+      'auto_correct_all': Settings.get(view, 'auto_correct_all', False),
       'start_daemon_automaticly': Settings.get(view, 'start_daemon_automaticly', False),
     })
     output = runner.run([view.file_name()], ['--format', 'emacs', '--force-exclusion']).splitlines()
